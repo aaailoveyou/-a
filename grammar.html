@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>语法 · 轻语</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav__brand" href="index.html"><span class="nav__mark"></span>轻语</a>
+  <div class="nav__links">
+    <a href="index.html">首页</a>
+    <a href="vocabulary.html">词汇</a>
+    <a href="grammar.html" aria-current="page">语法</a>
+    <a href="reading.html">阅读</a>
+    <a href="practice.html">练习</a>
+  </div>
+  <button class="nav__toggle" aria-label="打开菜单">☰</button>
+</nav>
+
+<header class="page-head wrap">
+  <h1>语法专题</h1>
+  <p>点开任意一条，看讲解和真实例句。不用一次学完，收藏起来慢慢看。</p>
+</header>
+
+<section class="wrap tight">
+  <div class="accordion" id="accordion"></div>
+</section>
+
+<footer>轻语 · 一个用来学英语的小网站</footer>
+
+<script src="script.js"></script>
+<script>
+const TOPICS = [
+  {
+    tag: "时态",
+    title: "现在完成时：have/has + 过去分词",
+    body: "用来表示过去发生、但和现在有联系的动作——强调的是'现在的结果'，而不是'什么时候发生的'。",
+    example: "I <b>have finished</b> my homework. （我作业写完了——现在的状态是'写完了'）"
+  },
+  {
+    tag: "时态",
+    title: "一般过去时 vs 现在完成时",
+    body: "一般过去时说的是一件已经结束、和现在没关系的事，通常带明确的时间点；现在完成时则不强调具体时间，只强调对现在的影响。",
+    example: "I <b>watched</b> that movie last night. / I <b>have watched</b> that movie three times."
+  },
+  {
+    tag: "从句",
+    title: "定语从句：who / which / that",
+    body: "用来修饰前面的名词，相当于给名词加一个'小尾巴'解释。指人用 who，指物用 which，两者都可以用 that。",
+    example: "The girl <b>who sits next to me</b> is my best friend."
+  },
+  {
+    tag: "从句",
+    title: "宾语从句：连接词 + 完整句子",
+    body: "当一个句子作为动词的宾语时，就是宾语从句。陈述句用 that，特殊疑问句用疑问词，一般疑问句用 if/whether。",
+    example: "I don't know <b>if he is coming</b> today."
+  },
+  {
+    tag: "语态",
+    title: "被动语态：be + 过去分词",
+    body: "当我们更关心'发生了什么'而不是'谁做的'时，就用被动语态。主语是动作的承受者。",
+    example: "The window <b>was broken</b> yesterday. （不知道或不想说是谁打破的）"
+  },
+  {
+    tag: "虚拟语气",
+    title: "if 引导的虚拟条件句",
+    body: "表示与现在事实相反的假设时，if 从句用一般过去时，主句用 would + 动词原形。",
+    example: "If I <b>had</b> more time, I <b>would learn</b> another language."
+  },
+  {
+    tag: "情态动词",
+    title: "must / have to 的区别",
+    body: "must 常表示说话人自己认为有必要；have to 更强调客观规则或外部要求。否定形式意思差别很大：mustn't 是'禁止'，don't have to 是'不必'。",
+    example: "You <b>must</b> be quiet in the library. / You <b>don't have to</b> bring your own pen."
+  },
+  {
+    tag: "比较级",
+    title: "比较级和最高级的构成",
+    body: "单音节词一般加 -er/-est；多音节词用 more/most；不规则变化要单独记，比如 good→better→best。",
+    example: "This book is <b>more interesting</b> than that one."
+  }
+];
+
+const acc = document.getElementById("accordion");
+acc.innerHTML = TOPICS.map(
+  (t, i) => `
+  <div class="acc-item" data-i="${i}">
+    <button class="acc-trigger" aria-expanded="false">
+      <span><span class="tag">${t.tag}</span> ${t.title}</span>
+      <span class="plus">+</span>
+    </button>
+    <div class="acc-panel">
+      <div class="acc-panel__inner">
+        <p>${t.body}</p>
+        <div class="ex">${t.example}</div>
+      </div>
+    </div>
+  </div>`
+).join("");
+
+acc.querySelectorAll(".acc-item").forEach((item) => {
+  const trigger = item.querySelector(".acc-trigger");
+  const panel = item.querySelector(".acc-panel");
+  trigger.addEventListener("click", () => {
+    const isOpen = item.classList.contains("is-open");
+    // close all
+    acc.querySelectorAll(".acc-item").forEach((other) => {
+      other.classList.remove("is-open");
+      other.querySelector(".acc-panel").style.maxHeight = null;
+      other.querySelector(".acc-trigger").setAttribute("aria-expanded", "false");
+    });
+    if (!isOpen) {
+      item.classList.add("is-open");
+      panel.style.maxHeight = panel.scrollHeight + "px";
+      trigger.setAttribute("aria-expanded", "true");
+    }
+  });
+});
+</script>
+</body>
+</html>

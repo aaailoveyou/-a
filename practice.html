@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>练习 · 轻语</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav__brand" href="index.html"><span class="nav__mark"></span>轻语</a>
+  <div class="nav__links">
+    <a href="index.html">首页</a>
+    <a href="vocabulary.html">词汇</a>
+    <a href="grammar.html">语法</a>
+    <a href="reading.html">阅读</a>
+    <a href="practice.html" aria-current="page">练习</a>
+  </div>
+  <button class="nav__toggle" aria-label="打开菜单">☰</button>
+</nav>
+
+<header class="page-head wrap">
+  <h1>综合测验</h1>
+  <p>10 道题，混合词汇和语法。答完立刻看结果。</p>
+</header>
+
+<section class="wrap tight">
+  <div class="quiz-shell">
+    <div class="quiz-progress"><div class="quiz-progress__bar" id="progressBar"></div></div>
+    <div id="quizBody"></div>
+    <div id="quizResult" class="quiz-result hidden">
+      <div class="score" id="scoreNum">0/10</div>
+      <p id="scoreMsg"></p>
+      <button class="btn btn--primary" id="retryBtn">再来一次</button>
+    </div>
+  </div>
+</section>
+
+<footer>轻语 · 一个用来学英语的小网站</footer>
+
+<script src="script.js"></script>
+<script>
+const QUESTIONS = [
+  { q: "She ___ to the gym every morning.", options: ["go", "goes", "going", "gone"], correct: 1 },
+  { q: "I have lived here ___ five years.", options: ["since", "for", "at", "from"], correct: 1 },
+  { q: "选出与 “curious” 意思最接近的词", options: ["bored", "inquisitive", "tired", "angry"], correct: 1 },
+  { q: "The letter ___ by my sister yesterday.", options: ["wrote", "was written", "writes", "is writing"], correct: 1 },
+  { q: "“accommodation” 最可能出现在哪个话题中？", options: ["旅行住宿", "编程", "运动比赛", "烹饪"], correct: 0 },
+  { q: "If I ___ more time, I would travel more.", options: ["have", "had", "will have", "having"], correct: 1 },
+  { q: "选出 “assignment” 的正确中文意思", options: ["假期", "作业/任务", "教室", "考试成绩"], correct: 1 },
+  { q: "This phone is ___ than my old one.", options: ["more good", "gooder", "better", "best"], correct: 2 },
+  { q: "The girl ___ is sitting there is my cousin.", options: ["who", "which", "whose", "whom"], correct: 0 },
+  { q: "“bandwidth” 通常和哪个话题有关？", options: ["网络/科技", "旅行", "家务", "语法"], correct: 0 }
+];
+
+let current = 0;
+let score = 0;
+const total = QUESTIONS.length;
+
+const body = document.getElementById("quizBody");
+const progressBar = document.getElementById("progressBar");
+const resultEl = document.getElementById("quizResult");
+
+function renderQuestion() {
+  const item = QUESTIONS[current];
+  progressBar.style.width = `${(current / total) * 100}%`;
+  body.innerHTML = `
+    <div class="quiz-counter">第 ${current + 1} 题 / 共 ${total} 题</div>
+    <div class="quiz-question">${item.q}</div>
+    <div class="quiz-options">
+      ${item.options.map((opt, i) => `<button class="quiz-option" data-i="${i}">${opt}</button>`).join("")}
+    </div>
+  `;
+  body.querySelectorAll(".quiz-option").forEach((btn) => {
+    btn.addEventListener("click", () => onAnswer(+btn.dataset.i));
+  });
+}
+
+function onAnswer(i) {
+  const item = QUESTIONS[current];
+  const buttons = body.querySelectorAll(".quiz-option");
+  buttons.forEach((b) => (b.disabled = true));
+  buttons[item.correct].classList.add("correct");
+  if (i !== item.correct) buttons[i].classList.add("wrong");
+  else score++;
+
+  setTimeout(() => {
+    current++;
+    if (current < total) {
+      renderQuestion();
+    } else {
+      progressBar.style.width = "100%";
+      showResult();
+    }
+  }, 700);
+}
+
+function showResult() {
+  body.classList.add("hidden");
+  resultEl.classList.remove("hidden");
+  document.getElementById("scoreNum").textContent = `${score}/${total}`;
+  const ratio = score / total;
+  let msg = "继续保持，多做几组会更熟练。";
+  if (ratio === 1) msg = "全部答对，非常棒！";
+  else if (ratio >= 0.7) msg = "很不错，再巩固一下就更稳了。";
+  document.getElementById("scoreMsg").textContent = msg;
+}
+
+document.getElementById("retryBtn").addEventListener("click", () => {
+  current = 0;
+  score = 0;
+  resultEl.classList.add("hidden");
+  body.classList.remove("hidden");
+  renderQuestion();
+});
+
+renderQuestion();
+</script>
+</body>
+</html>

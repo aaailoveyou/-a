@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>阅读 · 轻语</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav__brand" href="index.html"><span class="nav__mark"></span>轻语</a>
+  <div class="nav__links">
+    <a href="index.html">首页</a>
+    <a href="vocabulary.html">词汇</a>
+    <a href="grammar.html">语法</a>
+    <a href="reading.html" aria-current="page">阅读</a>
+    <a href="practice.html">练习</a>
+  </div>
+  <button class="nav__toggle" aria-label="打开菜单">☰</button>
+</nav>
+
+<header class="page-head wrap">
+  <h1>阅读练习</h1>
+  <p>读完短文，试着回答后面的问题。高亮的单词是这篇文章里比较重要的词汇。</p>
+</header>
+
+<section class="wrap tight" id="passages"></section>
+
+<footer>轻语 · 一个用来学英语的小网站</footer>
+
+<script src="script.js"></script>
+<script>
+const PASSAGES = [
+  {
+    title: "A Quiet Habit",
+    meta: "约 110 词 · 日常生活",
+    passage: `Every morning, before checking his phone, Leo spends ten minutes writing in a small notebook. He doesn't write about big events — just small things he noticed the day before: a <mark>strange</mark> smell of rain, a joke his sister told, or a mistake he wants to fix. At first, it felt <mark>pointless</mark>. Nothing he wrote seemed important enough to remember. But after a few months, Leo realized the habit had changed how he paid attention. He started noticing more, worrying less, and sleeping better. The notebook itself is not special — it's the ten quiet minutes that matter.`,
+    questions: [
+      {
+        q: "What does Leo do every morning?",
+        options: ["He checks his phone first.", "He writes in a notebook.", "He goes for a run.", "He calls his sister."],
+        correct: 1
+      },
+      {
+        q: "How did Leo feel about the habit at first?",
+        options: ["Excited", "Confident", "Like it was pointless", "Proud"],
+        correct: 2
+      },
+      {
+        q: "What changed after a few months?",
+        options: [
+          "He stopped writing completely.",
+          "He paid more attention and worried less.",
+          "He bought a new notebook.",
+          "He started writing about big events."
+        ],
+        correct: 1
+      }
+    ]
+  },
+  {
+    title: "Learning by Doing",
+    meta: "约 100 词 · 学习方法",
+    passage: `Many students believe that watching a tutorial is the same as learning a skill. It isn't. Watching someone else cook a meal feels <mark>familiar</mark>, but the first time you cook it yourself, you forget a step, burn something, or use the wrong amount of salt. That messy first attempt is where real learning happens. Teachers often say the same thing about language, coding, or drawing: understanding an explanation is only the beginning. The <mark>uncomfortable</mark> part — actually trying, failing, and trying again — is what turns knowledge into a skill you can actually use.`,
+    questions: [
+      {
+        q: "What is the main idea of the passage?",
+        options: [
+          "Watching tutorials is the best way to learn.",
+          "Cooking is harder than other skills.",
+          "Real learning happens through practice, not just watching.",
+          "Teachers should stop giving explanations."
+        ],
+        correct: 2
+      },
+      {
+        q: "What example does the writer use?",
+        options: ["Learning to swim", "Cooking a meal", "Playing a sport", "Painting a picture"],
+        correct: 1
+      }
+    ]
+  }
+];
+
+const container = document.getElementById("passages");
+
+container.innerHTML = PASSAGES.map(
+  (p, pi) => `
+  <div class="reading-card">
+    <h3>${p.title}</h3>
+    <div class="meta">${p.meta}</div>
+    <div class="passage">${p.passage}</div>
+    ${p.questions
+      .map(
+        (q, qi) => `
+      <div class="q-block" style="margin-bottom:18px;">
+        <div class="q">${qi + 1}. ${q.q}</div>
+        <div class="q-options" data-pi="${pi}" data-qi="${qi}">
+          ${q.options
+            .map((opt, oi) => `<button class="q-option" data-oi="${oi}">${opt}</button>`)
+            .join("")}
+        </div>
+      </div>`
+      )
+      .join("")}
+  </div>`
+).join("");
+
+container.querySelectorAll(".q-options").forEach((block) => {
+  const pi = +block.dataset.pi;
+  const qi = +block.dataset.qi;
+  const correctIdx = PASSAGES[pi].questions[qi].correct;
+  block.querySelectorAll(".q-option").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (block.dataset.answered) return;
+      block.dataset.answered = "1";
+      const oi = +btn.dataset.oi;
+      block.querySelectorAll(".q-option").forEach((b, i) => {
+        if (i === correctIdx) b.classList.add("correct");
+        else if (i === oi) b.classList.add("wrong");
+      });
+    });
+  });
+});
+</script>
+</body>
+</html>

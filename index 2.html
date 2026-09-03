@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>轻语 · 像用 iPhone 一样学英语</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav__brand" href="index.html"><span class="nav__mark"></span>轻语</a>
+  <div class="nav__links">
+    <a href="index.html" aria-current="page">首页</a>
+    <a href="vocabulary.html">词汇</a>
+    <a href="grammar.html">语法</a>
+    <a href="reading.html">阅读</a>
+    <a href="practice.html">练习</a>
+  </div>
+  <button class="nav__toggle" aria-label="打开菜单">☰</button>
+</nav>
+
+<header class="hero wrap">
+  <h1 class="display">把英语学习<br />变成一件轻松的事</h1>
+  <p class="lede">词汇、语法、阅读和听说练习，都用简洁清晰的方式呈现——不堆砌功能，只留下真正有用的部分。</p>
+  <div class="btn-row">
+    <a class="btn btn--primary" href="vocabulary.html">开始学习</a>
+    <a class="btn btn--ghost" href="practice.html">直接测一测</a>
+  </div>
+
+  <div class="wod" id="wod">
+    <p class="wod__label">每日一词</p>
+    <div class="wod__word">
+      <span id="wodWord">serendipity</span>
+      <span class="wod__phonetic" id="wodPhon">/ˌser.ənˈdɪp.ə.ti/</span>
+    </div>
+    <p class="wod__cn" id="wodCn">意外发现美好事物的运气</p>
+    <div class="wod__actions">
+      <button class="icon-btn" onclick="speak(document.getElementById('wodWord').textContent)">🔊 朗读</button>
+      <button class="icon-btn" id="wodNext">换一个</button>
+    </div>
+  </div>
+</header>
+
+<section class="wrap">
+  <div class="section-head">
+    <h2>四个板块，覆盖学习的每一步</h2>
+    <p>从记住一个单词，到读懂一整段文章，循序渐进。</p>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <div class="card__glyph" style="background:linear-gradient(135deg,#0071e3,#00c7be);">词</div>
+      <h3>核心词汇</h3>
+      <p>按场景分类的单词卡片，点一下就能听发音，翻面看释义和例句。</p>
+      <a class="card__link" href="vocabulary.html">进入词汇 →</a>
+    </div>
+    <div class="card">
+      <div class="card__glyph" style="background:linear-gradient(135deg,#5e5ce6,#0071e3);">语</div>
+      <h3>语法讲解</h3>
+      <p>把容易搞混的时态、从句拆开讲清楚，每条规则配真实例句。</p>
+      <a class="card__link" href="grammar.html">进入语法 →</a>
+    </div>
+    <div class="card">
+      <div class="card__glyph" style="background:linear-gradient(135deg,#ff9f0a,#ff453a);">读</div>
+      <h3>阅读练习</h3>
+      <p>短篇文章配理解题，读完立刻检验有没有真正看懂。</p>
+      <a class="card__link" href="reading.html">进入阅读 →</a>
+    </div>
+    <div class="card">
+      <div class="card__glyph" style="background:linear-gradient(135deg,#30d158,#00c7be);">练</div>
+      <h3>综合测验</h3>
+      <p>混合词汇与语法的选择题，实时打分，看看今天学得怎么样。</p>
+      <a class="card__link" href="practice.html">进入练习 →</a>
+    </div>
+  </div>
+</section>
+
+<section class="bg-alt">
+  <div class="wrap stats">
+    <div>
+      <div class="num">120+</div>
+      <div class="label">核心词汇卡片</div>
+    </div>
+    <div>
+      <div class="num">8</div>
+      <div class="label">语法专题</div>
+    </div>
+    <div>
+      <div class="num">5<span style="font-size:22px;">分钟</span></div>
+      <div class="label">每天只需一点时间</div>
+    </div>
+  </div>
+</section>
+
+<footer>轻语 · 一个用来学英语的小网站</footer>
+
+<script src="script.js"></script>
+<script>
+  const WORDS = [
+    { w: "serendipity", p: "/ˌser.ənˈdɪp.ə.ti/", cn: "意外发现美好事物的运气" },
+    { w: "resilient", p: "/rɪˈzɪl.i.ənt/", cn: "有韧性的，能很快恢复的" },
+    { w: "curious", p: "/ˈkjʊr.i.əs/", cn: "好奇的，求知欲强的" },
+    { w: "genuine", p: "/ˈdʒen.ju.ɪn/", cn: "真诚的，真实的" },
+    { w: "ambitious", p: "/æmˈbɪʃ.əs/", cn: "有抱负的，雄心勃勃的" },
+    { w: "vivid", p: "/ˈvɪv.ɪd/", cn: "生动的，鲜明的" },
+    { w: "thoughtful", p: "/ˈθɔːt.fəl/", cn: "体贴的，深思熟虑的" },
+    { w: "flourish", p: "/ˈflʌr.ɪʃ/", cn: "茁壮成长，繁荣" }
+  ];
+  let idx = 0;
+  function renderWod() {
+    document.getElementById("wodWord").textContent = WORDS[idx].w;
+    document.getElementById("wodPhon").textContent = WORDS[idx].p;
+    document.getElementById("wodCn").textContent = WORDS[idx].cn;
+  }
+  document.getElementById("wodNext").addEventListener("click", () => {
+    idx = (idx + 1) % WORDS.length;
+    renderWod();
+  });
+</script>
+</body>
+</html>

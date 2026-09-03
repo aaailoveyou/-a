@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>词汇 · 轻语</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav__brand" href="index.html"><span class="nav__mark"></span>轻语</a>
+  <div class="nav__links">
+    <a href="index.html">首页</a>
+    <a href="vocabulary.html" aria-current="page">词汇</a>
+    <a href="grammar.html">语法</a>
+    <a href="reading.html">阅读</a>
+    <a href="practice.html">练习</a>
+  </div>
+  <button class="nav__toggle" aria-label="打开菜单">☰</button>
+</nav>
+
+<header class="page-head wrap">
+  <h1>词汇卡片</h1>
+  <p>点卡片翻面看释义，点右上角的喇叭听发音。选一个分类开始吧。</p>
+</header>
+
+<section class="wrap tight">
+  <div class="tabs" id="tabs"></div>
+  <div class="flash-grid" id="flashGrid"></div>
+</section>
+
+<footer>轻语 · 一个用来学英语的小网站</footer>
+
+<script src="script.js"></script>
+<script>
+const CATEGORIES = ["全部", "日常生活", "校园学习", "旅行出行", "科技网络"];
+
+const WORDS = [
+  { w: "grocery", p: "/ˈɡroʊ.sər.i/", cn: "杂货，食品", ex: "I need to buy some grocery items.", cat: "日常生活" },
+  { w: "chore", p: "/tʃɔːr/", cn: "家务活", ex: "Doing chores every weekend is tiring.", cat: "日常生活" },
+  { w: "leftover", p: "/ˈleft.oʊ.vər/", cn: "剩饭剩菜", ex: "We had leftovers for dinner.", cat: "日常生活" },
+  { w: "errand", p: "/ˈer.ənd/", cn: "差事，跑腿", ex: "I have a few errands to run today.", cat: "日常生活" },
+  { w: "commute", p: "/kəˈmjuːt/", cn: "通勤", ex: "My commute takes about 30 minutes.", cat: "日常生活" },
+  { w: "budget", p: "/ˈbʌdʒ.ɪt/", cn: "预算", ex: "We need to stick to our budget.", cat: "日常生活" },
+  { w: "semester", p: "/sɪˈmes.tər/", cn: "学期", ex: "This semester is really busy.", cat: "校园学习" },
+  { w: "assignment", p: "/əˈsaɪn.mənt/", cn: "作业，任务", ex: "I finished my assignment last night.", cat: "校园学习" },
+  { w: "lecture", p: "/ˈlek.tʃər/", cn: "讲座，讲课", ex: "The lecture on history was fascinating.", cat: "校园学习" },
+  { w: "revise", p: "/rɪˈvaɪz/", cn: "复习，修改", ex: "I need to revise for my exam.", cat: "校园学习" },
+  { w: "curriculum", p: "/kəˈrɪk.jə.ləm/", cn: "课程体系", ex: "The new curriculum includes more science.", cat: "校园学习" },
+  { w: "classmate", p: "/ˈklæsˌmeɪt/", cn: "同班同学", ex: "My classmate helped me with math.", cat: "校园学习" },
+  { w: "itinerary", p: "/aɪˈtɪn.ər.er.i/", cn: "行程安排", ex: "Here's our itinerary for the trip.", cat: "旅行出行" },
+  { w: "layover", p: "/ˈleɪˌoʊ.vər/", cn: "中转停留", ex: "We have a two-hour layover in Tokyo.", cat: "旅行出行" },
+  { w: "boarding pass", p: "/ˈbɔːr.dɪŋ pæs/", cn: "登机牌", ex: "Please have your boarding pass ready.", cat: "旅行出行" },
+  { w: "accommodation", p: "/əˌkɒm.əˈdeɪ.ʃən/", cn: "住宿", ex: "We booked our accommodation online.", cat: "旅行出行" },
+  { w: "souvenir", p: "/ˌsuː.vəˈnɪr/", cn: "纪念品", ex: "I bought a souvenir for my friend.", cat: "旅行出行" },
+  { w: "customs", p: "/ˈkʌs.təmz/", cn: "海关", ex: "We went through customs quickly.", cat: "旅行出行" },
+  { w: "notification", p: "/ˌnoʊ.tɪ.fɪˈkeɪ.ʃən/", cn: "通知，提醒", ex: "I turned off app notifications.", cat: "科技网络" },
+  { w: "bandwidth", p: "/ˈbænd.wɪdθ/", cn: "带宽", ex: "Our internet bandwidth is limited.", cat: "科技网络" },
+  { w: "upload", p: "/ʌpˈloʊd/", cn: "上传", ex: "I need to upload the file first.", cat: "科技网络" },
+  { w: "firmware", p: "/ˈfɜːrm.wer/", cn: "固件", ex: "The device needs a firmware update.", cat: "科技网络" },
+  { w: "encrypt", p: "/ɪnˈkrɪpt/", cn: "加密", ex: "The app encrypts your messages.", cat: "科技网络" },
+  { w: "browser", p: "/ˈbraʊ.zər/", cn: "浏览器", ex: "Which browser do you usually use?", cat: "科技网络" }
+];
+
+const tabsEl = document.getElementById("tabs");
+const gridEl = document.getElementById("flashGrid");
+let active = "全部";
+
+function renderTabs() {
+  tabsEl.innerHTML = CATEGORIES.map(
+    (c) => `<button class="tab ${c === active ? "is-active" : ""}" data-cat="${c}">${c}</button>`
+  ).join("");
+  tabsEl.querySelectorAll(".tab").forEach((btn) =>
+    btn.addEventListener("click", () => {
+      active = btn.dataset.cat;
+      renderTabs();
+      renderGrid();
+    })
+  );
+}
+
+function renderGrid() {
+  const list = active === "全部" ? WORDS : WORDS.filter((w) => w.cat === active);
+  gridEl.innerHTML = list
+    .map(
+      (item, i) => `
+    <div class="flash" data-i="${i}">
+      <div class="flash__inner">
+        <div class="flash__face flash__front">
+          <button class="flash__speak" aria-label="朗读 ${item.w}" data-word="${item.w}">🔊</button>
+          <div class="flash__word">${item.w}</div>
+          <div class="flash__phon">${item.p}</div>
+        </div>
+        <div class="flash__face flash__back">
+          <div class="flash__cn">${item.cn}</div>
+          <div class="flash__ex">${item.ex}</div>
+        </div>
+      </div>
+    </div>`
+    )
+    .join("");
+
+  gridEl.querySelectorAll(".flash").forEach((card) => {
+    card.addEventListener("click", (e) => {
+      if (e.target.closest(".flash__speak")) return;
+      card.classList.toggle("is-flipped");
+    });
+  });
+
+  gridEl.querySelectorAll(".flash__speak").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      speak(btn.dataset.word);
+    });
+  });
+}
+
+renderTabs();
+renderGrid();
+</script>
+</body>
+</html>
